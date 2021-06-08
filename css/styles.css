@@ -291,11 +291,6 @@ Page Styles
     flex-direction: column;
 }
 
-.right-content {
-    width: 180px;
-    float: right;
-    background: #fff;
-}
 
 .main-content {
     flex: 1;
@@ -534,4 +529,11 @@ Page Styles
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
+}
+
+.mySlides {display:none;}
+
+img {
+  width: 100%;
+  height: auto;
 }
