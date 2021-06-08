@@ -291,6 +291,12 @@ Page Styles
     flex-direction: column;
 }
 
+.right-content {
+    width: 180px;
+    float: right;
+    background: #fff;
+}
+
 .main-content {
     flex: 1;
     overflow-y: auto;
@@ -451,7 +457,7 @@ Page Styles
     font-weight: 500;
     font-family: "Roboto", sans-serif;
     text-transform: uppercase;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     color: #222222;
 }
 
@@ -514,4 +520,18 @@ Page Styles
     color: #999999;
     font-weight: 500;
     letter-spacing: 5px;
+}
+
+
+
+.button {
+  background-color: #e7e7e7; 
+  color: black;
+  border: none;
+  color: black;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
 }
