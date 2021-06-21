@@ -4,4 +4,3 @@ Hi. I’m Diane. I've worked on a few projects during my hackathons and freetime
 
 I work at [Southern California Edison](https://www.sce.com/) as a IS Security Associate. For more information about me, check out [my resume](https://dmmargo.github.io/resume).
 
-### I have been booped on the nose <!-- boop-counter -->24<!-- /boop-counter --> times.
