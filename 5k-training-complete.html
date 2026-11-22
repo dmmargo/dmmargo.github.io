@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>5K Training App</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --card-hover: #273549;
+      --border: #334155;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-hover: #0ea5e9;
+      --green: #22c55e;
+      --danger: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .header {
+      margin-bottom: 24px;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .header p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .back-btn {
+      background: none;
+      border: none;
+      color: var(--accent);
+      font-size: 14px;
+      cursor: pointer;
+      margin-bottom: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .back-btn:hover {
+      text-decoration: underline;
+    }
+
+    .menu-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .menu-card {
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .menu-card:hover {
+      background-color: var(--card-hover);
+      border-color: var(--accent);
+    }
+
+    .menu-card h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .menu-card p {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .arrow {
+      color: var(--muted);
+      font-size: 18px;
+      margin-left: 12px;
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 14px;
+      margin-bottom: 14px;
+    }
+
+    .meta-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .badge {
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    .coach-note {
+      background: var(--bg);
+      border-left: 3px solid var(--accent);
+      padding: 12px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .coach-note strong {
+      color: var(--text);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 6px;
+      font-size: 14px;
+    }
+
+    th {
+      text-align: left;
+      color: var(--muted);
+      font-weight: 600;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 10px 4px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .btn {
+      background: var(--accent);
+      color: #0f172a;
+      font-weight: 600;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .btn:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-secondary {
+      background: var(--card-hover);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+    }
+
+    .btn-danger {
+      background: none;
+      color: var(--danger);
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 4px 8px;
+    }
+
+    .row-grid {
+      display: grid;
+      grid-template-columns: 0.9fr 1fr 1fr 1.3fr auto;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .row-grid input, .row-grid select {
+      margin-bottom: 0;
+      padding: 8px;
+    }
+
+    .timer-box {
+      text-align: center;
+      padding: 24px 16px;
+    }
+
+    .timer-activity {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .timer-clock {
+      font-size: 56px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      margin: 10px 0;
+    }
+
+    .timer-stats {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      color: var(--muted);
+      font-size: 15px;
+      margin-bottom: 20px;
+    }
+
+    .timer-stats span strong {
+      color: var(--text);
+    }
+
+    .active-row {
+      background: rgba(56, 189, 248, 0.15);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HOME VIEW -->
+  <div id="view-home" class="view active">
+    <div class="header">
+      <h1>5K Training</h1>
+      <p>Select a workout mode</p>
+    </div>
+
+    <div class="menu-stack">
+      <div class="menu-card" onclick="showView('view-load')">
+        <div>
+          <h2>Load</h2>
+          <p>Pick a training week &amp; session (All 15 Sessions)</p>
+        </div>
+        <span class="arrow">→</span>
+      </div>
+
+      <div class="menu-card" onclick="showView('view-new')">
+        <div>
+          <h2>New</h2>
+          <p>Build custom Time / Incline / Speed rows</p>
+        </div>
+        <span class="arrow">→</span>
+      </div>
+
+      <div class="menu-card" onclick="showView('view-options')">
+        <div>
+          <h2>Options</h2>
+          <p>Simulated races (Legg Lake, SD Race, etc.)</p>
+        </div>
+        <span class="arrow">→</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOAD VIEW -->
+  <div id="view-load" class="view">
+    <button class="back-btn" onclick="showView('view-home')">← Back to Menu</button>
+    <div class="header">
+      <h1>Load Workout</h1>
+      <p>Pick a training week &amp; session</p>
+    </div>
+
+    <div class="panel">
+      <label for="week-select">Select Week &amp; Session</label>
+      <select id="week-select" onchange="renderPresetDetails()"></select>
+
+      <div class="meta-badges" id="preset-badges"></div>
+      <div class="coach-note" id="preset-note"></div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Mins</th>
+            <th>Activity</th>
+            <th>Incline</th>
+            <th>Speed</th>
+          </tr>
+        </thead>
+        <tbody id="preset-tbody"></tbody>
+      </table>
+
+      <button class="btn" style="margin-top: 18px;" onclick="startSelectedPreset()">Start Workout</button>
+    </div>
+  </div>
+
+  <!-- NEW CUSTOM VIEW -->
+  <div id="view-new" class="view">
+    <button class="back-btn" onclick="showView('view-home')">← Back to Menu</button>
+    <div class="header">
+      <h1>New Custom Workout</h1>
+      <p>Build custom Time / Incline / Speed rows</p>
+    </div>
+
+    <div class="panel">
+      <label for="custom-title">Workout Name (Saved to Load Menu)</label>
+      <input type="text" id="custom-title" placeholder="e.g., Wednesday Hill Intervals" />
+
+      <div class="row-grid" style="font-size: 12px; color: var(--muted); margin-bottom: 4px;">
+        <span>Mins</span>
+        <span>Incline %</span>
+        <span>Speed</span>
+        <span>Activity</span>
+        <span></span>
+      </div>
+      <div id="custom-rows"></div>
+
+      <button class="btn btn-secondary" onclick="addCustomRow(5, 1.5, 5.4, 'Jog')">+ Add Row</button>
+      <button class="btn" onclick="saveAndStartCustom()">Save &amp; Start Workout</button>
+    </div>
+  </div>
+
+  <!-- OPTIONS / RACES VIEW -->
+  <div id="view-options" class="view">
+    <button class="back-btn" onclick="showView('view-home')">← Back to Menu</button>
+    <div class="header">
+      <h1>Simulated Races</h1>
+      <p>Treadmill elevation profiles for local 5K courses</p>
+    </div>
+
+    <div class="menu-stack" id="race-list"></div>
+  </div>
+
+  <!-- ACTIVE PLAYER VIEW -->
+  <div id="view-player" class="view">
+    <button class="back-btn" onclick="stopTimer(); showView('view-home')">← End &amp; Back to Menu</button>
+    <div class="header">
+      <h1 id="player-title">Workout</h1>
+      <p id="player-subtitle">Follow the treadmill prompts</p>
+    </div>
+
+    <div class="meta-badges" id="player-badges"></div>
+    <div class="coach-note" id="player-note"></div>
+
+    <div class="panel timer-box">
+      <div class="timer-activity" id="timer-activity">Warmup Walk</div>
+      <div class="timer-clock" id="timer-clock">05:00</div>
+      <div class="timer-stats">
+        <span>Incline: <strong id="timer-incline">3.0%</strong></span>
+        <span>Speed: <strong id="timer-speed">3.0-3.5 mph</strong></span>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn" id="pause-btn" onclick="togglePause()">Pause</button>
+        <button class="btn btn-secondary" onclick="skipStep()">Skip Step →</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <table>
+        <thead>
+          <tr>
+            <th>Mins</th>
+            <th>Activity</th>
+            <th>Incline</th>
+            <th>Speed</th>
+          </tr>
+        </thead>
+        <tbody id="player-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const defaultWorkouts = {
+    "Week 1 - Session 1": {
+      kcal: "~275-295 kcal",
+      paceSummary: "Jog: 5.3-5.6 mph @ 1.5% | Walk: 3.0-3.5 mph @ 3%",
+      note: "Aggressive start: 25 mins total running with just 60 sec rest. Keep effort steady (RPE 6).",
+      steps: [
+        { mins: 5, activity: "Warmup Walk", incline: "3.0%", speed: "3.0-3.5" },
+        { mins: 15, activity: "Jog", incline: "1.5%", speed: "5.3-5.6" },
+        { mins: 1, activity: "Recovery Walk", incline: "3.0%", speed: "3.0-3.5" },
+        { mins: 10, activity: "Jog", incline: "1.5%", speed: "5.3-5.6" },
+        { mins: 5, activity: "Cooldown Walk", incline: "3.0%", speed: "3.0-3.5" }
+      ]
+    },
+    "Week 1 - Session 2 (Hill Prep)": {
+      kcal: "~285-305 kcal",
+      paceSummary: "Jog: 5.1-5.6 mph (varied inclines) | Walk: 3.0-3.5 mph @ 3%",
+      note: "Simulates Park Blvd climb (3.5-4.0%) and downhill finish (0.0%). Do not hold handrails.",
+      steps: [
+        { mins: 5, activity: "Warmup Walk", incline: "3.0%", speed: "3.0-3.5" },
+        { mins: 10, activity: "Jog", incline: "1.5%", speed: "5.3-5.5" },
+        { mins: 4, activity: "Hill Climb Jog", incline: "3.5%", speed: "5.1-5.3" },
+        { mins: 3, activity: "Steady Jog", incline: "1.5%", speed: "5.3-5.5" },
+        { mins: 4, activity: "Steep Climb Jog", incline: "4.0%", speed: "5.1-5.2" },
+        { mins: 4, activity: "Downhill Finish", incline: "0.0%", speed: "5.5-5.6" },
+        { mins: 5, activity: "Cooldown Walk", incline: "3.0%", speed: "3.0-3.5" }
+      ]
+    },
+    "Week 1 - Session 3": {
+      kcal: "~280-300 kcal",
+      paceSummary: "Jog: 5.2-5.5 mph @ 1.5% | Walk: 3.0-3.5 mph @ 3%",
+      note: "Eliminate walk breaks entirely. Focus on tall posture and relaxed shoulders.",
+      steps: [
+        { mins: 5, activity: "Warmup Walk", incline: "3.0%", speed: "3.0-3.5" },
+        { mins: 25, activity: "Continuous Jog", incline: "1.5%", speed: "5.2-5.5" },
+        { mins: 5, activity: "Cooldown Walk", incline: "3.0%", speed: "3.0-3.5" }
+      ]
+    },
+    "Week 2 - Session 1": {
+      kcal: "~305-330 kcal",
+      paceSummary: "Jog: 5.3-5.6 mph @ 1.5% | Walk: 3.0-3.5 mph @ 3%",
+      note: "Build continuous aerobic endurance; keep pace conversational in the first 15 mins.",
+      steps: [
+        { mins: 5, activity: "Warmup Walk", incline: "3.0%", speed: "3.0-3.5" },
+        { mins: 28, activity: "Continuous Jog", incline: "1.5%", speed: "5.3-5.6" },
+        { mins: 5, activity: "Cooldown Walk", incline: "3.0%", speed: "3.0-3.5" }
+      ]
+    },
+    "Week 2 - Session 2 (Overpass Surge)": {
+      kcal: "~300-325 kcal",
+      paceSummary: "Jog: 5.0-5.8 mph (varied inclines) | Walk: 3.0-3.5 mph @ 3%",
+      note: "Replicates C St climb + I-5 overpass peak (5.0%) then fast drop toward Petco Park (5.7-5.8 mph @ 0%).",
+      steps: [
+        { mins: 5, activity: "Warmup Walk", incline: "3.0%", speed: "3.0-3.5" },
+        { mins: 10, activity: "Base Jog", incline: "1.5%", speed: "5.3-5.5" },
+        { mins: 6, activity: "C St Climb", incline: "4.0%", speed: "5.1-5.2" },
+        { mins: 2, activity: "I-5 Overpass Peak", incline: "5.0%", speed: "5.0" },
+        { mins: 8, activity: "Petco Park Drop", incline: "0.0%", speed: "5.7-5.8" },
+        { mins: 5, activity: "Cooldown Walk", incline: "3.0%", speed: "3.0-3.5" }
+      ]
+    },
+    "Week 2 - Session 3 (Outdoor Test)": {
+      kcal: "~295-320 kcal",
+      paceSummary: "Easy conversational pace (hilly route) | Brisk walk",
+      note: "Outdoor Test: Run on pavement with light hills to condition ankles and feet for road impact.",
+      steps: [
+        { mins: 5, activity: "Brisk Warmup Walk", incline: "Outdoor", speed: "Brisk Walk" },
+        { mins: 28, activity: "Outdoor Continuous Jog", incline: "Light Hills", speed: "Conversational" },
+        { mins: 5, activity: "Easy Cooldown Walk", incline: "Outdoor", speed: "Easy Walk" }
+      ]
+    },
+    "Week 3 - Session 1": {
+      kcal: "~325-350 kcal",
+      paceSummary: "Jog: 5.4-5.7 mph @ 1.5% | Walk: 3.0-3.5 mph @ 3%",
+      note: "Hit the 30-minute nonstop milestone. Start at 5.4 mph and nudge up to 5.7 mph in final 10 mins.",
+      steps: [
+        { mins: 5, activity: "Warmup Walk", incline: "3.0%", speed: "3.0-3.5" },
+        { mins: 20, activity: "Steady Jog", incline: "1.5%", speed: "5.4" },
+        { mins: 10, activity: "Strong Finish Jog", incline: "1.5%", speed: "5.7" },
+        { mins: 5, activity: "Cooldown Walk", incline: "3.0%", speed: "3.0-3.5" }
+      ]
+    },
+    "Week 3 - Session 2 (Downhill Speed)": {
+      kcal: "~320-345 kcal",
+      paceSummary: "5.4 mph (1.5%) -> 5.8-6.0 mph (0%) | Walk: 3.0-3.5 mph @ 3%",
+      note: "Practice negative splits: quicken leg turnover on 0% incline to simulate final downhill mile.",
+      steps: [
+        { mins: 5, activity: "Warmup Walk", incline: "3.0%", speed: "3.0-3.5" },
+        { mins: 18, activity: "Steady Jog", incline: "1.5%", speed: "5.4" },
+        { mins: 10, activity: "Fast Downhill Finish", incline: "0.0%", speed: "5.8-6.0" },
+        { mins: 5, activity: "Cooldown Walk", incline: "3.0%", speed: "3.0-3.5" }
+      ]
+    },
+    "Week 3 - Session 3 (Outdoor Test)": {
+      kcal: "~315-340 kcal",
+      paceSummary: "Controlled start + strong final mile | Brisk walk",
+      note: "Outdoor Test: Practice pacing mile 1 conservatively (11:00/mi feel) and accelerating in mile 3.",
+      steps: [
+        { mins: 5, activity: "Brisk Warmup Walk", incline: "Outdoor", speed: "Brisk Walk" },
+        { mins: 22, activity: "Miles 1-2 Controlled Jog", incline: "Outdoor", speed: "~11:00/mi feel" },
+        { mins: 10, activity: "Mile 3 Strong Finish", incline: "Outdoor", speed: "Accelerate" },
+        { mins: 5, activity: "Easy Cooldown Walk", incline: "Outdoor", speed: "Easy Walk" }
+      ]
+    },
+    "Week 4 - Session 1": {
+      kcal: "~280-305 kcal",
+      paceSummary: "Jog: 5.4-5.7 mph @ 1.5% | Walk: 3.0-3.5 mph @ 3%",
+      note: "Moderate effort run to keep legs fresh for your full San Diego course simulation in Session 3.",
+      steps: [
+        { mins: 5, activity: "Warmup Walk", incline: "3.0%", speed: "3.0-3.5" },
+        { mins: 25, activity: "Steady Continuous Jog", incline: "1.5%", speed: "5.4-5.7" },
+        { mins: 5, activity: "Cooldown Walk", incline: "3.0%", speed: "3.0-3.5" }
+      ]
+    },
+    "Week 4 - Session 2 (Hill Maintenance)": {
+      kcal: "~285-310 kcal",
+      paceSummary: "5.1-5.8 mph (varied inclines) | Walk: 3.0-3.5 mph @ 3%",
+      note: "Keep hill climbing muscles primed without overly fatiguing calves or feet.",
+      steps: [
+        { mins: 5, activity: "Warmup Walk", incline: "3.0%", speed: "3.0-3.5" },
+        { mins: 12, activity: "Base Jog", incline: "1.5%", speed: "5.4" },
+        { mins: 5, activity: "Moderate Hill", incline: "3.5%", speed: "5.2" },
+        { mins: 2, activity: "Steep Hill Surge", incline: "5.0%", speed: "5.1" },
+        { mins: 6, activity: "Fast Flat Finish", incline: "0.0%", speed: "5.7-5.8" },
+        { mins: 5, activity: "Cooldown Walk", incline: "3.0%", speed: "3.0-3.5" }
+      ]
+    },
+    "Week 4 - Session 3 (SD Course Sim)": {
+      kcal: "~340-365 kcal",
+      paceSummary: "5.1-5.9 mph (course profile) | Walk: 3.0-3.5 mph @ 3%",
+      note: "Dress Rehearsal: Exact San Diego 5K elevation profile (3.1 miles). Push 5.8-5.9 mph on final 0.8 mi @ 0%.",
+      steps: [
+        { mins: 5, activity: "Warmup Walk", incline: "3.0%", speed: "3.0-3.5" },
+        { mins: 5, activity: "0.4 mi Start Stretch", incline: "1.0%", speed: "5.4" },
+        { mins: 9, activity: "0.8 mi Steady Climb", incline: "3.0%", speed: "5.2" },
+        { mins: 9, activity: "0.8 mi Peak Climb", incline: "4.5%", speed: "5.1" },
+        { mins: 3, activity: "0.3 mi Crest Transition", incline: "1.5%", speed: "5.5" },
+        { mins: 8, activity: "0.8 mi Downhill Finish", incline: "0.0%", speed: "5.8-5.9" },
+        { mins: 5, activity: "Cooldown Walk", incline: "3.0%", speed: "3.0-3.5" }
+      ]
+    },
+    "Week 5 - Session 1": {
+      kcal: "~225-245 kcal",
+      paceSummary: "Jog: 5.2-5.5 mph @ 1.5% | Walk: 3.0-3.5 mph @ 3%",
+      note: "Taper Week: Cut volume back to let muscles repair and store energy for peak performance.",
+      steps: [
+        { mins: 5, activity: "Warmup Walk", incline: "3.0%", speed: "3.0-3.5" },
+        { mins: 20, activity: "Easy Continuous Jog", incline: "1.5%", speed: "5.2-5.5" },
+        { mins: 5, activity: "Cooldown Walk", incline: "3.0%", speed: "3.0-3.5" }
+      ]
+    },
+    "Week 5 - Session 2": {
+      kcal: "~180-200 kcal",
+      paceSummary: "Jog: 5.2-5.4 mph @ 1.0% | Walk: 3.0-3.5 mph @ 3%",
+      note: "Light shakeout run; take 1-2 full rest days before your goal 5K test.",
+      steps: [
+        { mins: 5, activity: "Warmup Walk", incline: "3.0%", speed: "3.0-3.5" },
+        { mins: 15, activity: "Easy Shakeout Jog", incline: "1.0%", speed: "5.2-5.4" },
+        { mins: 5, activity: "Cooldown Walk", incline: "3.0%", speed: "3.0-3.5" }
+      ]
+    },
+    "Week 5 - Session 3 (5K Goal / Race)": {
+      kcal: "~340-370 kcal",
+      paceSummary: "5.2-6.0 mph (negative split) | Walk: 3.0-3.5 mph @ 3%",
+      note: "Goal Run: Conservative climb (Mile 1-2) and fast downhill finish (Mile 3). Repeat any week if needed!",
+      steps: [
+        { mins: 5, activity: "Warmup Walk", incline: "3.0%", speed: "3.0-3.5" },
+        { mins: 5, activity: "0.4 mi Start Stretch", incline: "1.0%", speed: "5.4" },
+        { mins: 9, activity: "0.8 mi Conservative Climb", incline: "3.0%", speed: "5.2" },
+        { mins: 9, activity: "0.8 mi Peak Climb", incline: "4.5%", speed: "5.2" },
+        { mins: 3, activity: "0.3 mi Crest Transition", incline: "1.5%", speed: "5.6" },
+        { mins: 8, activity: "0.8 mi Fast Downhill Finish", incline: "0.0%", speed: "5.9-6.0" },
+        { mins: 5, activity: "Cooldown Walk", incline: "3.0%", speed: "3.0-3.5" }
+      ]
+    }
+  };
+
+  const simulatedRaces = [
+    {
+      name: "San Diego Hot Chocolate 5K (Exact Profile)",
+      desc: "3.1 miles: 0.4mi@1% / 0.8mi@3% / 0.8mi@4-5% / 0.3mi@1.5% / 0.8mi@0%",
+      kcal: "~340-365 kcal",
+      note: "Exact San Diego 5K elevation profile. Stay conservative on the mid-race climb and push 5.8-6.0 mph on the final 0.8 mi @ 0%.",
+      steps: defaultWorkouts["Week 4 - Session 3 (SD Course Sim)"].steps
+    },
+    {
+      name: "Legg Lake 5K (South El Monte)",
+      desc: "Mostly flat park loop with gentle bridges & paved paths",
+      kcal: "~310-335 kcal",
+      note: "Flat, fast course ideal for negative splits and steady cadence.",
+      steps: [
+        { mins: 5, activity: "Warmup Walk", incline: "3.0%", speed: "3.0-3.5" },
+        { mins: 11, activity: "Mile 1 - Flat Park Loop", incline: "0.5%", speed: "5.4" },
+        { mins: 11, activity: "Mile 2 - Lake Bridge Rollers", incline: "1.5%", speed: "5.5" },
+        { mins: 10, activity: "Mile 3 - Fast Flat Finish", incline: "0.5%", speed: "5.8" },
+        { mins: 5, activity: "Cooldown Walk", incline: "3.0%", speed: "3.0-3.5" }
+      ]
+    },
+    {
+      name: "Rose Bowl Loop 5K (Pasadena)",
+      desc: "Gradual uphill false flat going north, smooth return south",
+      kcal: "~325-350 kcal",
+      note: "Hold steady effort going up the northbound false flat, then open up stride on the southbound return.",
+      steps: [
+        { mins: 5, activity: "Warmup Walk", incline: "3.0%", speed: "3.0-3.5" },
+        { mins: 16, activity: "Northbound Gradual Climb", incline: "2.5%", speed: "5.3" },
+        { mins: 15, activity: "Southbound Descent", incline: "0.5%", speed: "5.7" },
+        { mins: 5, activity: "Cooldown Walk", incline: "3.0%", speed: "3.0-3.5" }
+      ]
+    }
+  ];
+
+  function getAllWorkouts() {
+    const saved = JSON.parse(localStorage.getItem("custom5kWorkouts_v2") || "{}");
+    return { ...defaultWorkouts, ...saved };
+  }
+
+  function showView(viewId) {
+    document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+    document.getElementById(viewId).classList.add("active");
+    if (viewId === "view-load") populateSelect();
+  }
+
+  function populateSelect() {
+    const select = document.getElementById("week-select");
+    const workouts = getAllWorkouts();
+    const currentVal = select.value;
+    select.innerHTML = "";
+    Object.keys(workouts).forEach(name => {
+      const opt = document.createElement("option");
+      opt.value = name;
+      opt.textContent = name;
+      select.appendChild(opt);
+    });
+    if (currentVal && workouts[currentVal]) {
+      select.value = currentVal;
+    }
+    renderPresetDetails();
+  }
+
+  function renderPresetDetails() {
+    const name = document.getElementById("week-select").value;
+    const data = getAllWorkouts()[name];
+    if (!data) return;
+
+    document.getElementById("preset-badges").innerHTML = `
+      <span class="badge">🔥 ${data.kcal || "Custom"}</span>
+      <span class="badge">⚡ ${data.paceSummary || "Custom Intervals"}</span>
+    `;
+    document.getElementById("preset-note").innerHTML = `<strong>Coach's Note:</strong> ${data.note || "Follow your custom treadmill intervals."}`;
+
+    const tbody = document.getElementById("preset-tbody");
+    tbody.innerHTML = data.steps.map(s => `
+      <tr>
+        <td>${s.mins}m</td>
+        <td>${s.activity}</td>
+        <td>${s.incline}</td>
+        <td>${s.speed}</td>
+      </tr>
+    `).join("");
+  }
+
+  function startSelectedPreset() {
+    const name = document.getElementById("week-select").value;
+    const data = getAllWorkouts()[name];
+    startWorkout(name, data);
+  }
+
+  function addCustomRow(mins = 5, incline = 1.5, speed = 5.4, activity = "Jog") {
+    const container = document.getElementById("custom-rows");
+    const div = document.createElement("div");
+    div.className = "row-grid";
+    div.innerHTML = `
+      <input type="number" class="c-mins" value="${mins}" min="1" max="60" />
+      <input type="number" class="c-inc" value="${incline}" step="0.5" min="0" max="15" />
+      <input type="text" class="c-spd" value="${speed}" />
+      <select class="c-act">
+        <option ${activity === "Walk" ? "selected" : ""}>Walk</option>
+        <option ${activity === "Jog" ? "selected" : ""}>Jog</option>
+        <option ${activity === "Run" ? "selected" : ""}>Run</option>
+      </select>
+      <button class="btn-danger" onclick="this.parentElement.remove()">✕</button>
+    `;
+    container.appendChild(div);
+  }
+
+  function saveAndStartCustom() {
+    const rows = document.querySelectorAll("#custom-rows .row-grid");
+    const steps = [];
+    rows.forEach(r => {
+      steps.push({
+        mins: parseInt(r.querySelector(".c-mins").value) || 1,
+        incline: r.querySelector(".c-inc").value + "%",
+        speed: r.querySelector(".c-spd").value,
+        activity: r.querySelector(".c-act").value
+      });
+    });
+
+    if (steps.length === 0) return alert("Add at least one row.");
+
+    const title = document.getElementById("custom-title").value.trim() || "Custom Workout";
+    const workoutObj = {
+      kcal: "Custom Session",
+      paceSummary: "User-defined intervals",
+      note: "Custom workout created in New mode.",
+      steps: steps
+    };
+
+    const saved = JSON.parse(localStorage.getItem("custom5kWorkouts_v2") || "{}");
+    saved[title] = workoutObj;
+    localStorage.setItem("custom5kWorkouts_v2", JSON.stringify(saved));
+
+    startWorkout(title, workoutObj);
+  }
+
+  function renderRaces() {
+    const list = document.getElementById("race-list");
+    list.innerHTML = simulatedRaces.map((r, idx) => `
+      <div class="menu-card" onclick="startRace(${idx})">
+        <div>
+          <h2>${r.name}</h2>
+          <p>${r.desc}</p>
+        </div>
+        <span class="arrow">→</span>
+      </div>
+    `).join("");
+  }
+
+  function startRace(idx) {
+    const race = simulatedRaces[idx];
+    startWorkout(race.name, race);
+  }
+
+  let activeSteps = [];
+  let currentStepIdx = 0;
+  let secondsLeft = 0;
+  let timerInterval = null;
+  let isPaused = false;
+
+  function startWorkout(title, workoutObj) {
+    activeSteps = workoutObj.steps;
+    currentStepIdx = 0;
+    isPaused = false;
+
+    document.getElementById("player-title").textContent = title;
+    document.getElementById("player-badges").innerHTML = `
+      <span class="badge">🔥 ${workoutObj.kcal || "Custom"}</span>
+      <span class="badge">⚡ ${workoutObj.paceSummary || "Custom"}</span>
+    `;
+    document.getElementById("player-note").innerHTML = `<strong>Coach's Note:</strong> ${workoutObj.note || ""}`;
+    document.getElementById("pause-btn").textContent = "Pause";
+
+    showView("view-player");
+    loadStep(0);
+    stopTimer();
+    timerInterval = setInterval(tick, 1000);
+  }
+
+  function loadStep(idx) {
+    if (idx >= activeSteps.length) {
+      stopTimer();
+      document.getElementById("timer-activity").textContent = "Workout Complete!";
+      document.getElementById("timer-clock").textContent = "00:00";
+      return;
+    }
+    currentStepIdx = idx;
+    const step = activeSteps[idx];
+    secondsLeft = step.mins * 60;
+    document.getElementById("timer-activity").textContent = step.activity;
+    document.getElementById("timer-incline").textContent = step.incline;
+    document.getElementById("timer-speed").textContent = step.speed + (step.speed.match(/[0-9]/) ? " mph" : "");
+    updateClockDisplay();
+    renderPlayerTable();
+  }
+
+  function tick() {
+    if (isPaused) return;
+    if (secondsLeft > 0) {
+      secondsLeft--;
+      updateClockDisplay();
+    } else {
+      loadStep(currentStepIdx + 1);
+    }
+  }
+
+  function updateClockDisplay() {
+    const m = Math.floor(secondsLeft / 60).toString().padStart(2, "0");
+    const s = (secondsLeft % 60).toString().padStart(2, "0");
+    document.getElementById("timer-clock").textContent = `${m}:${s}`;
+  }
+
+  function togglePause() {
+    isPaused = !isPaused;
+    document.getElementById("pause-btn").textContent = isPaused ? "Resume" : "Pause";
+  }
+
+  function skipStep() {
+    loadStep(currentStepIdx + 1);
+  }
+
+  function stopTimer() {
+    if (timerInterval) clearInterval(timerInterval);
+  }
+
+  function renderPlayerTable() {
+    const tbody = document.getElementById("player-tbody");
+    tbody.innerHTML = activeSteps.map((s, i) => `
+      <tr class="${i === currentStepIdx ? "active-row" : ""}">
+        <td>${s.mins}m</td>
+        <td>${s.activity}</td>
+        <td>${s.incline}</td>
+        <td>${s.speed}</td>
+      </tr>
+    `).join("");
+  }
+
+  // Initialize default custom builder rows & race cards
+  addCustomRow(5, 3.0, "3.0-3.5", "Walk");
+  addCustomRow(15, 1.5, "5.3-5.6", "Jog");
+  addCustomRow(5, 3.0, "3.0-3.5", "Walk");
+  renderRaces();
+</script>
+
+</body>
+</html>
